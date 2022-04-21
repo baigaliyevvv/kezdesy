@@ -11,6 +11,8 @@ import com.example.kkkezdesy.repositories.UserRepo;
 import com.example.kkkezdesy.services.UserServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -70,7 +72,7 @@ public class MainController {
     };
 
     @PostMapping("/register")
-    public String register(@RequestBody User user){
+    public ResponseEntity register(@RequestBody User user){
         String regex = "^(.+)@(.+)$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(user.getEmail());
@@ -84,27 +86,27 @@ public class MainController {
                                     user.getRoles().add(roleRepo.findByName("ROLE_USER"));
                                     user.setPassword(passwordEncoder.encode(user.getPassword()));
                                     userRepo.save(user);
-                                    return "User was added.";
+                                    return new ResponseEntity("User was added", HttpStatus.CREATED);
                                 }else{
-                                    return "Incorrect gender.\nChoose between Male, Female or Other.";
+                                    return ResponseEntity.badRequest().body("Incorrect gender.\nChoose between Male, Female or Other.");
                                 }
                             }else{
-                                return "Incorrect city";
+                                return ResponseEntity.badRequest().body("Incorrect city");
                             }
                         }else{
-                            return "Password must contain at least 8 characters.";
+                            return ResponseEntity.badRequest().body("Password must contain at least 8 characters.");
                         }
                     }else{
-                        return "Incorrect name or lastname.";
+                        return ResponseEntity.badRequest().body("Incorrect name or lastname.");
                     }
                 }else{
-                    return "Incorrect email address.";
+                    return ResponseEntity.badRequest().body("Incorrect email address.");
                 }
             }else{
-                return "Incorrect age.";
+                return ResponseEntity.badRequest().body("Incorrect age.");
             }
         }else{
-            return "User already exist.";
+            return ResponseEntity.badRequest().body("User already exist.");
         }
     }
 
