@@ -71,6 +71,37 @@ public class MainController {
         }
     };
 
+    public int userIsValid(User user){
+        String regex = "^(.+)@(.+)$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(user.getEmail());
+        if(!userRepo.existsByEmail(user.getEmail())){
+            if(user.getAge() < 120 && user.getAge() > 5){
+                if(matcher.matches()){
+                    if(validateString(user.getFirst_name()) && validateString(user.getLast_name())){
+                            if(validCity(user.getCity())){
+                                if(user.getGender().equals("Male") || user.getGender().equals("Female") || user.getGender().equals("Other")){
+                                    return 0;
+                                }else{
+                                    return 7;
+                                }
+                            }else{
+                                return 6;
+                            }
+                    }else{
+                        return 4;
+                    }
+                }else{
+                    return 3;
+                }
+            }else{
+                return 2;
+            }
+        }else{
+            return 1;
+        }
+    }
+
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody User user){
         String regex = "^(.+)@(.+)$";

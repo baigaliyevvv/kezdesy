@@ -41,7 +41,7 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().antMatchers("/css/**", "/js/**", "/img/**", "**/favicon.ico").anonymous();
         http.authorizeRequests().antMatchers("/public/**", "/resources/**","/resources/static/**", "/").permitAll();
-        http.authorizeRequests().antMatchers("/register", "/auth", "/login", "/token/refresh", "/loginUser").permitAll();
+        http.authorizeRequests().antMatchers("/register", "/auth", "/login", "/token/refresh", "/loginUser", "/profile", "/updateUser").permitAll();
         http.authorizeRequests().antMatchers("/home").hasAnyAuthority("ROLE_USER");
         http.authorizeRequests().antMatchers("/allUsers").hasAnyAuthority("ROLE_ADMIN");
         http.authorizeRequests().anyRequest().authenticated();
