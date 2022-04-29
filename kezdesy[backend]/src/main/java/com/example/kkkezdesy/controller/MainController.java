@@ -11,6 +11,8 @@ import com.example.kkkezdesy.repositories.UserRepo;
 import com.example.kkkezdesy.services.UserServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -48,57 +50,7 @@ public class MainController {
 
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    private ArrayList<String> cities= new ArrayList<>(){
-        {
-            add("Nur-Sultan");
-            add("Almaty");
-            add("Shymkent");
-            add("Aktobe");
-            add("Karaganda");
-            add("Atyrau");
-            add("Taraz");
-            add("Pavlodar");
-            add("Semei");
-            add("Ust-Kamenogorsk");
-            add("Kyzylorda");
-            add("Uralsk");
-            add("Kostanay");
-            add("Petropavlsk");
-            add("Taldykorgan");
-            add("Kokshetau");
-        }
-    };
-
-    @PostMapping("/register")
-    public String register(@RequestBody User user){
-        int x = userIsValid(user);
-        if(x == 0){
-            return "User was added.";
-        }else{
-            if(x == 1){
-                return "User already exist.";
-            }
-            if(x == 2){
-                return "Incorrect age.";
-            }
-            if(x == 3){
-                return "Incorrect email.";
-            }
-            if(x == 4){
-                return "Incorrect name or surname.";
-            }
-            if(x == 5){
-                return "Password must contain at least 8 characters.";
-            }
-            if(x == 6){
-                return "Incorrect city.";
-            }
-            if(x == 7){
-                return "Incorrect gender.\nChoose between Male, Female or Other.";
-            }
-            return "Enexpected error.";
-        }
-    }
+    private ArrayList<String> cities = new ArrayList<>();
 
     public int userIsValid(User user){
         String regex = "^(.+)@(.+)$";
@@ -108,12 +60,8 @@ public class MainController {
             if(user.getAge() < 120 && user.getAge() > 5){
                 if(matcher.matches()){
                     if(validateString(user.getFirst_name()) && validateString(user.getLast_name())){
-                        if(user.getPassword().length() >= 8){
                             if(validCity(user.getCity())){
                                 if(user.getGender().equals("Male") || user.getGender().equals("Female") || user.getGender().equals("Other")){
-                                    user.getRoles().add(roleRepo.findByName("ROLE_USER"));
-                                    user.setPassword(passwordEncoder.encode(user.getPassword()));
-                                    userRepo.save(user);
                                     return 0;
                                 }else{
                                     return 7;
@@ -121,9 +69,6 @@ public class MainController {
                             }else{
                                 return 6;
                             }
-                        }else{
-                            return 5;
-                        }
                     }else{
                         return 4;
                     }
@@ -135,6 +80,45 @@ public class MainController {
             }
         }else{
             return 1;
+        }
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity register(@RequestBody User user){
+        String regex = "^(.+)@(.+)$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(user.getEmail());
+        if(!userRepo.existsByEmail(user.getEmail())){
+            if(user.getAge() < 120 && user.getAge() > 5){
+                if(matcher.matches()){
+                    if(validateString(user.getFirst_name()) && validateString(user.getLast_name())){
+                        if(user.getPassword().length() >= 8){
+                            if(true){
+                                if(user.getGender().equals("Male") || user.getGender().equals("Female") || user.getGender().equals("Other")){
+                                    user.getRoles().add(roleRepo.findByName("ROLE_USER"));
+                                    user.setPassword(passwordEncoder.encode(user.getPassword()));
+                                    userRepo.save(user);
+                                    return new ResponseEntity("User was added", HttpStatus.CREATED);
+                                }else{
+                                    return ResponseEntity.badRequest().body("Incorrect gender.\nChoose between Male, Female or Other.");
+                                }
+                            }else{
+                                return ResponseEntity.badRequest().body("Incorrect city");
+                            }
+                        }else{
+                            return ResponseEntity.badRequest().body("Password must contain at least 8 characters.");
+                        }
+                    }else{
+                        return ResponseEntity.badRequest().body("Incorrect name or lastname.");
+                    }
+                }else{
+                    return ResponseEntity.badRequest().body("Incorrect email address.");
+                }
+            }else{
+                return ResponseEntity.badRequest().body("Incorrect age.");
+            }
+        }else{
+            return ResponseEntity.badRequest().body("User already exist.");
         }
     }
 
