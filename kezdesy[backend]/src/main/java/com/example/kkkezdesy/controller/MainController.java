@@ -93,17 +93,13 @@ public class MainController {
                 if(matcher.matches()){
                     if(validateString(user.getFirst_name()) && validateString(user.getLast_name())){
                         if(user.getPassword().length() >= 8){
-                            if(true){
-                                if(user.getGender().equals("Male") || user.getGender().equals("Female") || user.getGender().equals("Other")){
-                                    user.getRoles().add(roleRepo.findByName("ROLE_USER"));
-                                    user.setPassword(passwordEncoder.encode(user.getPassword()));
-                                    userRepo.save(user);
-                                    return new ResponseEntity("User was added", HttpStatus.CREATED);
-                                }else{
-                                    return ResponseEntity.badRequest().body("Incorrect gender.\nChoose between Male, Female or Other.");
-                                }
+                            if(user.getGender().equals("Male") || user.getGender().equals("Female") || user.getGender().equals("Other")){
+                                user.getRoles().add(roleRepo.findByName("ROLE_USER"));
+                                user.setPassword(passwordEncoder.encode(user.getPassword()));
+                                userRepo.save(user);
+                                return new ResponseEntity("User was added", HttpStatus.CREATED);
                             }else{
-                                return ResponseEntity.badRequest().body("Incorrect city");
+                                return ResponseEntity.badRequest().body("Incorrect gender.\nChoose between Male, Female or Other.");
                             }
                         }else{
                             return ResponseEntity.badRequest().body("Password must contain at least 8 characters.");
@@ -160,11 +156,6 @@ public class MainController {
         }else {
             throw new RuntimeException("Refresh token is missing.");
         }
-    }
-
-    @GetMapping("/home")
-    public String getHome(){
-        return "Hello World!";
     }
 
     public boolean validateString(String str) {

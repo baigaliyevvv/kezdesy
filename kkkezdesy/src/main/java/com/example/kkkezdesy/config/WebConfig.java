@@ -39,8 +39,8 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().antMatchers("/css/**", "/js/**", "/img/**", "**/favicon.ico").anonymous();
-        http.authorizeRequests().antMatchers("/public/**", "/resources/**","/resources/static/**", "/").permitAll();
+        http.authorizeRequests().antMatchers("/css/**", "/js/**", "/img/**", "**/favicon.ico", "/favicon.ico", "**/css/font-awesome.min.css").anonymous();
+        http.authorizeRequests().antMatchers("/public/**", "/resources/**","/resources/static/**", "/", "/createRoom", "/room/*").permitAll();
         http.authorizeRequests().antMatchers("/register", "/auth", "/login", "/token/refresh", "/loginUser", "/profile", "/updateUser").permitAll();
         http.authorizeRequests().antMatchers("/home").hasAnyAuthority("ROLE_USER");
         http.authorizeRequests().antMatchers("/allUsers").hasAnyAuthority("ROLE_ADMIN");

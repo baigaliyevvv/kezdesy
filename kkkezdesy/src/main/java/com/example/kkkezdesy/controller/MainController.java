@@ -50,26 +50,7 @@ public class MainController {
 
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    private ArrayList<String> cities= new ArrayList<>(){
-        {
-            add("Nur-Sultan");
-            add("Almaty");
-            add("Shymkent");
-            add("Aktobe");
-            add("Karaganda");
-            add("Atyrau");
-            add("Taraz");
-            add("Pavlodar");
-            add("Semei");
-            add("Ust-Kamenogorsk");
-            add("Kyzylorda");
-            add("Uralsk");
-            add("Kostanay");
-            add("Petropavlsk");
-            add("Taldykorgan");
-            add("Kokshetau");
-        }
-    };
+    private ArrayList<String> cities = new ArrayList<>();
 
     public int userIsValid(User user){
         String regex = "^(.+)@(.+)$";
@@ -79,15 +60,15 @@ public class MainController {
             if(user.getAge() < 120 && user.getAge() > 5){
                 if(matcher.matches()){
                     if(validateString(user.getFirst_name()) && validateString(user.getLast_name())){
-                            if(validCity(user.getCity())){
-                                if(user.getGender().equals("Male") || user.getGender().equals("Female") || user.getGender().equals("Other")){
-                                    return 0;
-                                }else{
-                                    return 7;
-                                }
+                        if(validCity(user.getCity())){
+                            if(user.getGender().equals("Male") || user.getGender().equals("Female") || user.getGender().equals("Other")){
+                                return 0;
                             }else{
-                                return 6;
+                                return 7;
                             }
+                        }else{
+                            return 6;
+                        }
                     }else{
                         return 4;
                     }
@@ -112,17 +93,13 @@ public class MainController {
                 if(matcher.matches()){
                     if(validateString(user.getFirst_name()) && validateString(user.getLast_name())){
                         if(user.getPassword().length() >= 8){
-                            if(validCity(user.getCity())){
-                                if(user.getGender().equals("Male") || user.getGender().equals("Female") || user.getGender().equals("Other")){
-                                    user.getRoles().add(roleRepo.findByName("ROLE_USER"));
-                                    user.setPassword(passwordEncoder.encode(user.getPassword()));
-                                    userRepo.save(user);
-                                    return new ResponseEntity("User was added", HttpStatus.CREATED);
-                                }else{
-                                    return ResponseEntity.badRequest().body("Incorrect gender.\nChoose between Male, Female or Other.");
-                                }
+                            if(user.getGender().equals("Male") || user.getGender().equals("Female") || user.getGender().equals("Other")){
+                                user.getRoles().add(roleRepo.findByName("ROLE_USER"));
+                                user.setPassword(passwordEncoder.encode(user.getPassword()));
+                                userRepo.save(user);
+                                return new ResponseEntity("User was added", HttpStatus.CREATED);
                             }else{
-                                return ResponseEntity.badRequest().body("Incorrect city");
+                                return ResponseEntity.badRequest().body("Incorrect gender.\nChoose between Male, Female or Other.");
                             }
                         }else{
                             return ResponseEntity.badRequest().body("Password must contain at least 8 characters.");
@@ -179,11 +156,6 @@ public class MainController {
         }else {
             throw new RuntimeException("Refresh token is missing.");
         }
-    }
-
-    @GetMapping("/home")
-    public String getHome(){
-        return "Hello World!";
     }
 
     public boolean validateString(String str) {

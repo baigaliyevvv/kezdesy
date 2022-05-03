@@ -31,4 +31,9 @@ public class WebController {
     public String getEditPage() {
         return "updateUser";
     }
+
+    @GetMapping("/createRoom")
+    public String getCreateRoomPage() {
+        return "addroom";
+    }
 }
