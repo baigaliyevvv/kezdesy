@@ -2,8 +2,11 @@ package com.example.kkkezdesy.controller;
 
 import com.example.kkkezdesy.entities.User;
 import com.example.kkkezdesy.model.DeleteProfileRequest;
+import com.example.kkkezdesy.model.ProfilePicEmailRequest;
 import com.example.kkkezdesy.repositories.UserRepo;
+import com.example.kkkezdesy.services.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,7 +21,13 @@ public class ProfileController {
     @Autowired
     private MainController mainController;
 
+    private final UserServiceImpl userService;
+
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    public ProfileController(UserServiceImpl userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("/getUser")
     public ResponseEntity<User>getUserByUsername(@RequestParam String email) {
@@ -42,6 +51,16 @@ public class ProfileController {
             return ResponseEntity.badRequest().body("Some field is incorrect.");
         }
         return ResponseEntity.ok().body("User updated");
+    }
+
+    @PostMapping("/setPicture")
+    public ResponseEntity changePhoto(@RequestBody ProfilePicEmailRequest profilePicEmailRequest) {
+        String file = profilePicEmailRequest.getFile().replace("{\"file\":\"", "");
+        file = file.replace("\"}","");
+        if (userService.changePhoto(profilePicEmailRequest.getEmail(), file)) {
+            return new ResponseEntity("photo changed", HttpStatus.ACCEPTED);
+        }
+        return ResponseEntity.badRequest().body("error");
     }
 
     @PostMapping("/deleteUser")

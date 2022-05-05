@@ -49,7 +49,7 @@ public class RoomFindController {
             if (roomEmailRequest.getMinAgeLimit() == 0) {
                 rooms.removeIf(room -> room.getMinAgeLimit() > user.getAge());
             }
-            if (roomEmailRequest.getMaxAgeLimit() == 0) {
+            if (roomEmailRequest.getMaxAgeLimit() == 120) {
                 rooms.removeIf(room -> room.getMaxAgeLimit() < user.getAge());
             }
             return new ResponseEntity<List<Room>>(rooms, HttpStatus.CREATED);
@@ -62,7 +62,7 @@ public class RoomFindController {
         if (roomEmailRequest.getMinAgeLimit() == 0) {
             rooms2.removeIf(room -> room.getMinAgeLimit() > user.getAge());
         }
-        if (roomEmailRequest.getMaxAgeLimit() == 0) {
+        if (roomEmailRequest.getMaxAgeLimit() == 120) {
             rooms2.removeIf(room -> room.getMaxAgeLimit() < user.getAge());
         }
         return new ResponseEntity<List<Room>>(rooms2, HttpStatus.CREATED);

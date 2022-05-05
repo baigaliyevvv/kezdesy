@@ -18,6 +18,13 @@ public class UserServiceImpl implements UserDetailsService {
     @Autowired
     private UserRepo userRepo;
 
+    public boolean changePhoto(String email, String file) {
+        User user = userRepo.findByEmail(email);
+        user.setProfilePic(file);
+        userRepo.save(user);
+        return true;
+    }
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepo.findByEmail(email);
