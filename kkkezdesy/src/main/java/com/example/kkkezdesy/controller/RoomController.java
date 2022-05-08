@@ -1,10 +1,12 @@
 package com.example.kkkezdesy.controller;
 
-import com.example.kkkezdesy.entities.Interest;
+import com.example.kkkezdesy.entities.Chat;
 import com.example.kkkezdesy.entities.Room;
 import com.example.kkkezdesy.entities.User;
 import com.example.kkkezdesy.model.DeleteProfileRequest;
+import com.example.kkkezdesy.model.EmailRoomId;
 import com.example.kkkezdesy.model.RoomEmailRequest;
+import com.example.kkkezdesy.repositories.ChatRepo;
 import com.example.kkkezdesy.repositories.RoomRepo;
 import com.example.kkkezdesy.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.AbstractSet;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
+import java.util.Objects;
 
 @Controller
 @RequestMapping("/room")
@@ -27,6 +28,9 @@ public class RoomController {
 
     @Autowired
     private UserRepo userRepo;
+
+    @Autowired
+    private ChatRepo chatRepo;
 
     @PostMapping("/create")
     public ResponseEntity createRoom(@RequestBody RoomEmailRequest roomEmailRequest){
@@ -64,10 +68,10 @@ public class RoomController {
     }
 
     public boolean isAgeLimitCorrect(int lower, int higher){
-        if(lower <= 15 || lower > higher){
+        if(lower <= 11 || lower > higher){
             return false;
         }
-        if(higher <= 16){
+        if(higher <= 12){
             return false;
         }
         if(higher - lower < 1){
@@ -77,5 +81,36 @@ public class RoomController {
             return false;
         }
         return true;
+    }
+
+    public boolean isUserInRoom(String email, Collection<User> users) {
+        for (User user : users) {
+            if (Objects.equals(user.getEmail(), email)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @PostMapping("/join")
+    public ResponseEntity joinRoom(@RequestBody EmailRoomId emailRoomId){
+        Room room = roomRepo.findById(emailRoomId.getRoomId()).orElse(null);
+        if (isUserInRoom(emailRoomId.getEmail(), room.getMembers())){
+            room.getMembers().add(userRepo.findByEmail(emailRoomId.getEmail()));
+            roomRepo.save(room);
+            if(room.getMembers().size() == room.getMaxMembers()){
+                Chat chat = new Chat();
+                for(User i : room.getMembers()){
+                    i.getChats().add(chat);
+                }
+                chat.setName(room.getHeader());
+                chatRepo.save(chat);
+                return new ResponseEntity("User was added to room. Chat was created.", HttpStatus.CREATED);
+            }
+            return new ResponseEntity("User was added to room.", HttpStatus.CREATED);
+        }
+        else {
+            return new ResponseEntity("User is already in room", HttpStatus.BAD_REQUEST);
+        }
     }
 }

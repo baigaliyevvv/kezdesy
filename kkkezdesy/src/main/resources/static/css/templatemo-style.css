@@ -227,6 +227,24 @@ body {
   cursor: pointer;
 }
 
+.about-content-chat {
+  background-color: #61b48d;
+  border-radius: 1em;
+  margin-top: 40px;
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
+.about-content-chat h2 {
+  font-family: 'Dosis';
+  text-align: center;
+  font-size: 25px;
+  font-weight: 600;
+  text-transform: uppercase;
+  display: inline-block;
+  margin: 30px 8px 10px -100px;
+  color: #f6fbfa;
+}
 
 .about-content {
   background-color: #5fbf91;
@@ -292,6 +310,24 @@ body {
   text-align: center;
   margin-left: 30px;
   color: #fff;
+  text-decoration: none;
+}
+
+.btn_chat a {
+  font-family: 'Dosis';
+  font-size: 16px;
+  text-transform: uppercase;
+  border: 2px solid #f6fbfa;
+  border-radius: 1em;
+  font-weight: 600;
+  width: 160px;
+  height: 50px;
+  display: block;
+  line-height: 46px;
+  text-align: center;
+  margin-top: 15px;
+  margin-bottom: 20px;
+  color: #f6fbfa;
   text-decoration: none;
 }
 

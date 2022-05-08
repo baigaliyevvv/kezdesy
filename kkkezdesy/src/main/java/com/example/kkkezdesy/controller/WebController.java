@@ -1,11 +1,20 @@
 package com.example.kkkezdesy.controller;
 
+import com.example.kkkezdesy.repositories.ChatRepo;
+import com.example.kkkezdesy.repositories.UserRepo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class WebController {
+
+    @Autowired
+    private UserRepo userRepo;
+
+    @Autowired
+    private ChatRepo chatRepo;
 
     @GetMapping("/auth")
     public String getPage() {
@@ -25,6 +34,11 @@ public class WebController {
     @GetMapping("/profile")
     public String getProfilePage() {
         return "profile";
+    }
+
+    @GetMapping("/chats")
+    public String getChats() {
+        return "chat";
     }
 
     @GetMapping("/updateUser")

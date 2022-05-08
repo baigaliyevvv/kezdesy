@@ -21,7 +21,7 @@
                         <i class="fa fa-bars"></i>
                     </button>
                     <div class="logo-wrapper">
-                        <a class="navbar-brand" href="#">
+                        <a class="navbar-brand" href="/">
                             <img src="/img/logo2.png" alt="rainbow template" title="rainbow template">
                         </a>
                     </div>
@@ -29,7 +29,7 @@
                 <div class="collapse navbar-collapse" id="main-menu">
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="/" class="link-home">Home</a></li>
-                        <li><a href="#about" class="link-about">Message</a></li>
+                        <li><a href="/chats" class="link-about">Message</a></li>
                         <li><a href="/profile" class="link-portfolio">Profile</a></li>
                     </ul>
                 </div>
@@ -286,16 +286,39 @@
                                     "                </div>\n" +
                                     "                <div class=\"col-sm-3 col-xs-12\">\n" +
                                     "                    <div class=\"first-btn\">\n" +
-                                    "                        <a href=\"#\">Join us</a>\n" +
+                                    "                        <a id=\"join"+item.id+"\" >Join us</a>\n" +
                                     "                    </div>\n" +
                                     "                </div>\n" +
                                     "            </div>\n" +
                                     "            <div class=\"row\">\n" +
                                     "                <div class=\"col-sm-3 col-xs-12\">\n" +
-                                    "                    <div class=\"second-btn\">\n" +
+                                    "                    <div id=\"messages"+item.id+"\" class=\"second-btn\">\n" +
                                     "                    </div>\n" +
                                     "                </div>\n" +
                                     "            </div></div></div>");
+
+                                $('#join' + item.id).on('click', function () {
+                                    let resultC = parseJwt(myCookie);
+                                    let email = resultC.sub;
+                                    $.ajax({
+                                        type: "POST",
+                                        headers: {'Authorization': myCookie},
+                                        contentType: 'application/json',
+                                        url: "room/join",
+                                        data: JSON.stringify({"email" : email, "roomId" : item.id}),
+                                        dataType: 'json',
+                                        complete: function (result) {
+                                            console.log(item.id);
+                                            console.log(result.responseText);
+                                            if (result.responseText === "User was added to room. Chat was created.") {
+                                                window.location.replace("/chats");
+                                            }
+                                            else {
+                                                $('#messages' + item.id).html(result.responseText);
+                                            }
+                                        }
+                                    });
+                                });
                             }
                         })
                     },

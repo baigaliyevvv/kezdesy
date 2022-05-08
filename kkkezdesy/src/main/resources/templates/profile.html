@@ -24,7 +24,7 @@
                         <i class="fa fa-bars"></i>
                     </button>
                     <div class="logo-wrapper">
-                        <a class="navbar-brand" href="#">
+                        <a class="navbar-brand" href="/">
                             <img src="/img/logo2.png" alt="rainbow template" title="rainbow template">
                         </a>
                     </div>
@@ -32,7 +32,7 @@
                 <div class="collapse navbar-collapse" id="main-menu">
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="/" class="link-home">Home</a></li>
-                        <li><a href="#about" class="link-about">Message</a></li>
+                        <li><a href="/chats" class="link-about">Message</a></li>
                         <li><a href="/profile" class="link-portfolio">Profile</a></li>
                     </ul>
                 </div>
@@ -84,11 +84,21 @@
 
                         <div class="panel-heading" role="tab">
                             <h4 class="panel-title">
+                                <a id="logout" class="collapsed" role="button">
+                                    <div class="title btn btn-danger btn-outline btn-lg">LOG OUT</div>
+                                </a>
+                            </h4>
+                        </div>
+
+                        <div class="panel-heading" role="tab">
+                            <h4 class="panel-title">
                                 <a id="delete" class="collapsed delete" role="button" >
                                     <div class="title btn btn-danger btn-outline btn-lg">DELETE</div>
                                 </a>
                             </h4>
                         </div>
+
+
 
                     </div>
                 </div>
@@ -265,6 +275,12 @@
         } else {
             window.location.replace("/loginUser");
         }
+
+        $('#logout').on('click', function () {
+            eraseCookie("Authorization");
+            window.location.replace("/");
+        });
+
 
         $('#delete').on('click', function () {
             let resultC = parseJwt(myCookie);

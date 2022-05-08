@@ -1,11 +1,15 @@
 package com.example.kkkezdesy.entities;
 
+import lombok.Data;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
+@Data
 @Entity
 @Table(name = "usr")
 public class User {
@@ -40,6 +44,10 @@ public class User {
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Role> roles = new ArrayList<>();
+
+    @ManyToMany
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private Collection<Chat> chats = new ArrayList<>();
 
     public User(String first_name, String last_name, int age, String city, String email, String password, String profilePic) {
         this.first_name = first_name;
