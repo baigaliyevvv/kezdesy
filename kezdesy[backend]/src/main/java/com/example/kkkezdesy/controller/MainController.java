@@ -13,12 +13,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -130,6 +128,18 @@ public class MainController {
     public List<User> getAllUsers(){
         return userRepo.findAll();
     }
+    @GetMapping("/getUserByToken")
+    public User getUserByToken(@RequestHeader(value = "Authorization") String token){
+        token = token.substring("Bearer ".length());
+        Algorithm algorithm = Algorithm.HMAC256("zxcxz".getBytes());
+        JWTVerifier verifier = JWT.require(algorithm).build();
+        DecodedJWT decodedJWT = verifier.verify(token);
+        String email = decodedJWT.getSubject();
+
+        User user = userService.getByEmail(email);
+
+        return user;
+    }
 
     @GetMapping("/token/refresh")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -165,6 +175,7 @@ public class MainController {
             throw new RuntimeException("Refresh token is missing.");
         }
     }
+
 
     public boolean validateString(String str) {
         str = str.toLowerCase();
