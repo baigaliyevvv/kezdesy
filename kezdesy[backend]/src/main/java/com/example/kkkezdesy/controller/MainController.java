@@ -13,10 +13,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,7 +28,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static java.util.Arrays.stream;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -60,15 +55,15 @@ public class MainController {
             if(user.getAge() < 120 && user.getAge() > 5){
                 if(matcher.matches()){
                     if(validateString(user.getFirst_name()) && validateString(user.getLast_name())){
-                            if(validCity(user.getCity())){
-                                if(user.getGender().equals("Male") || user.getGender().equals("Female") || user.getGender().equals("Other")){
-                                    return 0;
-                                }else{
-                                    return 7;
-                                }
+                        if(validCity(user.getCity())){
+                            if(user.getGender().equals("Male") || user.getGender().equals("Female") || user.getGender().equals("Other")){
+                                return 0;
                             }else{
-                                return 6;
+                                return 7;
                             }
+                        }else{
+                            return 6;
+                        }
                     }else{
                         return 4;
                     }
@@ -115,6 +110,19 @@ public class MainController {
             }
         }else{
             return ResponseEntity.badRequest().body("User already exist.");
+        }
+    }
+
+    @PostMapping("/registerGoogle")
+    public ResponseEntity registerGoogle(@RequestBody User user){
+        if(!userRepo.existsByEmail(user.getEmail())) {
+            user.getRoles().add(roleRepo.findByName("ROLE_USER"));
+            user.setPassword(passwordEncoder.encode("12345678"));
+            userRepo.save(user);
+            return new ResponseEntity("User was added", HttpStatus.CREATED);
+        }
+        else {
+            return new ResponseEntity("User is exist", HttpStatus.CREATED);
         }
     }
 

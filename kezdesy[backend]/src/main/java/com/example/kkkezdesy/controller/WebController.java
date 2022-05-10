@@ -2,7 +2,6 @@ package com.example.kkkezdesy.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 @Controller
 public class WebController {
@@ -27,8 +26,18 @@ public class WebController {
         return "profile";
     }
 
+    @GetMapping("/chats")
+    public String getChats() {
+        return "chat";
+    }
+
     @GetMapping("/updateUser")
     public String getEditPage() {
         return "updateUser";
+    }
+
+    @GetMapping("/createRoom")
+    public String getCreateRoomPage() {
+        return "addroom";
     }
 }

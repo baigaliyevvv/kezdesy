@@ -1,5 +1,7 @@
 package com.example.kkkezdesy.entities;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,6 +9,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "room")
+@Data
 public class Room {
 
     @Id
@@ -40,14 +43,13 @@ public class Room {
     @Column(name = "interest")
     private Set<Interest> interests;
 
-    public Room(String city, String header, String description, int minAgeLimit, int maxAgeLimit, int maxMembers, Collection<User> members, Set<Interest> skillSet) {
+    public Room(String city, String header, String description, int minAgeLimit, int maxAgeLimit, int maxMembers, Set<Interest> skillSet) {
         this.city = city;
         this.header = header;
         this.description = description;
         this.minAgeLimit = minAgeLimit;
         this.maxAgeLimit = maxAgeLimit;
         this.maxMembers = maxMembers;
-        this.members = members;
         this.interests = skillSet;
     }
 
